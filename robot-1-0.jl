@@ -82,6 +82,8 @@ end
 
 function level3(r)
     println("level3")
+    #r=Robot("D:\\programs\\julia\\robot-algorithmist\\temp.sit")
+    #r=Robot("Robot/Manual/practice_1/situation_3.png")
     show(r)
 end
 
@@ -92,7 +94,9 @@ end
 
 function level5(r)
     println("level5")
-    show(r)
+    show!(r)
+    _ = readline()
+    save(r, "situation3.sit")
 end
 
 function level6(r)
@@ -127,6 +131,10 @@ end
 
 println("Введите номер уровня")
 n = parse(Int, readline())
-solutionForLevel(n)
+robot = Robot()
+show!(robot)
+_ = readline()
+save(robot.situation, "D:\\programs\\julia\\robot-algorithmist\\new.sit")
+#solutionForLevel(n)
 println("Программа завершена. Нажмите enter")
 _ = readline()

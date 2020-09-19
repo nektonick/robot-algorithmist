@@ -500,14 +500,6 @@ function pre_show_actions(r::Robot)
 end
 
 show(sitfile::AbstractString) = sitfile!="temp.sit" ? show(Robot(sitfile)) : (@warn "Просмотр temp.sit возможен только с помощью show(::Robot;...)")
-
-"""
-    save(r::Robot, sitfile::AbstractString)::Nothing
-
--- сохраняет обстановку на поле с роботом в указанном текстовом файле    
-"""
-save(r::Robot, outfile::AbstractString)=save(r.situation,outfile)
-
 """
     sitedit(infile::AbstractString; outfile=infile)::Nothing
 
