@@ -82,8 +82,7 @@ end
 
 function level3(r)
     println("level3")
-    #r=Robot("D:\\programs\\julia\\robot-algorithmist\\temp.sit")
-    #r=Robot("Robot/Manual/practice_1/situation_3.png")
+    r=Robot("D:\\programs\\julia\\robot-algorithmist\\situation_3.sit")
     show(r)
 end
 
@@ -101,6 +100,7 @@ end
 
 function level6(r)
     println("level6")
+    r=Robot("D:\\programs\\julia\\robot-algorithmist\\situation_6.sit")
     show(r)
 end
 
@@ -129,12 +129,18 @@ function loadMapForLevel(level::Int)
     println("загружена карта для уровня ", string(level))
 end
 
+function generateAndSaveSit(ss::AbstractString) 
+    robot = Robot() 
+    show!(robot)
+    _ = readline()
+    ss = "D:\\programs\\julia\\robot-algorithmist\\" * ss 
+    save(robot.situation, ss)
+    println("сохранено как" * ss)
+
+end
 println("Введите номер уровня")
 n = parse(Int, readline())
-robot = Robot()
-show!(robot)
-_ = readline()
-save(robot.situation, "D:\\programs\\julia\\robot-algorithmist\\new.sit")
-#solutionForLevel(n)
+#generateAndSaveSit("new3.sit")
+solutionForLevel(n)
 println("Программа завершена. Нажмите enter")
 _ = readline()
