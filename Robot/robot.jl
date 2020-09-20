@@ -147,7 +147,7 @@ module SituationData
     end
 
     function load(file_name::AbstractString) 
-        io = open(file_name)
+        io = open(file_name, "r")
         readline(io) # -> "frame_size:"
         frame_size = Tuple(parse.(Int, split(readline(io))))
         readline(io) # -> coefficient

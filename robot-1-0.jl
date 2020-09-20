@@ -82,7 +82,7 @@ end
 
 function level3(r)
     println("level3")
-    r=Robot("D:\\programs\\julia\\robot-algorithmist\\situation_3.sit")
+    r=Robot("situation_3.sit")
     show(r)
 end
 
@@ -100,7 +100,7 @@ end
 
 function level6(r)
     println("level6")
-    r=Robot("D:\\programs\\julia\\robot-algorithmist\\situation_6.sit")
+    r=Robot("situation_6.sit")
     show(r)
 end
 
@@ -133,7 +133,6 @@ function generateAndSaveSit(ss::AbstractString)
     robot = Robot() 
     show!(robot)
     _ = readline()
-    ss = "D:\\programs\\julia\\robot-algorithmist\\" * ss 
     save(robot.situation, ss)
     println("сохранено как" * ss)
 
