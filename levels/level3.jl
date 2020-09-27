@@ -6,5 +6,12 @@ function level3(r)
     moves!(r, Down)
     moves!(r, Left)
 
-    
+    horisontalDirection = Right
+
+    while(!(isborder(r, Up)))
+        movesAndPutMarkers!(r, horisontalDirection)
+        moves!(r, Up, 1)
+        horisontalDirection = inverse(horisontalDirection)
+    end
+    movesAndPutMarkers!(r, horisontalDirection)
 end
