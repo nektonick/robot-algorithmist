@@ -1,5 +1,10 @@
 function level3(r)
     println("level3")
-    r=Robot("levels/situation_3.sit")
-    show(r)
+    r = Robot(; animate=true)
+
+    #движемся в левый нижний угол
+    moves!(r, Down)
+    moves!(r, Left)
+
+    
 end

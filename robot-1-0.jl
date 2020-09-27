@@ -43,6 +43,9 @@ levelName="levels/level";
 levelName = levelName * string(n) * ".jl"
 include(levelName)
 
+#вызов решения для нужного уровня
 solutionForLevel(n)
+
+#последняя строка нужна, чтобы окно поля сразу же не закрылось
 println("Программа завершена. Нажмите enter")
 _ = readline()
