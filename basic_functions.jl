@@ -27,6 +27,18 @@ function movesAndPutMarkers!(r::Robot,side::DirectionsOfMovement)
     end
     putmarker!(r)
 end
+function movesAndPutMarkers!(r::Robot,side::DirectionsOfMovement, countOfMarkers::Int)
+    while isborder(r, side) == false
+        if (countOfMarkers > 0)
+            putmarker!(r)
+            countOfMarkers = countOfMarkers - 1
+        end
+        move!(r,side)
+    end
+    if (countOfMarkers > 0)
+        putmarker!(r)
+    end
+end
 
 function moves!(r::Robot,side::DirectionsOfMovement,num_steps::Int)
     for _ in 1:num_steps # символ "_" заменяет фактически не используемую переменную
