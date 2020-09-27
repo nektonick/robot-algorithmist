@@ -1,10 +1,10 @@
 function level3(r)
     println("level3")
-    r = Robot(; animate=true)
+    r = Robot(4, 4; animate=true)
 
     #движемся в левый нижний угол
-    moves!(r, Down)
-    moves!(r, Left)
+    nDown = moves!(r, Down)
+    nLeft = moves!(r, Left)
 
     horisontalDirection = Right
 
@@ -14,4 +14,10 @@ function level3(r)
         horisontalDirection = inverse(horisontalDirection)
     end
     movesAndPutMarkers!(r, horisontalDirection)
+    
+    #возвращение в левый нижний угол
+    moveToLeftDownCorner!(r)
+    #возвращение в начальное положение
+    moves!(r, Up, nDown)
+    moves!(r, Right, nLeft)
 end

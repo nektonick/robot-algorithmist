@@ -33,3 +33,8 @@ function moves!(r::Robot,side::DirectionsOfMovement,num_steps::Int)
         move!(r,side)
     end
 end
+
+function moveToLeftDownCorner!(r::Robot)
+    moves!(r, Down)
+    moves!(r, Left)
+end
