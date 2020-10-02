@@ -29,7 +29,7 @@ function level5(r)
     end        
 end
 
-#Другое решение, которое я не понимаю
+#Другое решение, которое я не вполне понимаю
 function level5__(r)
     println("level5")
     r = Robot("levels/situation_5.sit"; animate=true)
