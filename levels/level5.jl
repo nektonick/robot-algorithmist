@@ -3,7 +3,39 @@ function level5(r)
     r = Robot("levels/situation_5.sit"; animate=true)
 
     num_steps=[]
-    #Двигаемся в нижний угол, сохраняя шаги в массив
+    while isborder(r,Down)==false || isborder(r,Left)==false
+        if (isborder(r, Down) == false)
+            push!(num_steps, "Up")
+            move!(r, Down)
+        end
+        if (isborder(r, Left) == false)
+            push!(num_steps, "Right")
+            move!(r, Left)
+        end
+    end
+
+    for side in (Up, Right, Down, Left)
+        moves!(r,side)
+        putmarker!(r)
+    end
+
+    for element in num_steps
+        if (element == "Up")
+            move!(r, Up)
+        end
+        if (element == "Right")
+            move!(r, Right)
+        end
+    end        
+end
+
+#Другое решение, которое я не понимаю
+function level5__(r)
+    println("level5")
+    r = Robot("levels/situation_5.sit"; animate=true)
+
+    num_steps=[]
+    #Пока можем, двигаемся в нижний угол, сохраняя шаги в массив
     while isborder(r,Down)==false || isborder(r,Left)==false
         push!(num_steps,moves!(r,Left))
         push!(num_steps,moves!(r,Down))
