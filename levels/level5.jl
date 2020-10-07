@@ -19,7 +19,7 @@ function level5(r)
         putmarker!(r)
     end
 
-    for element in num_steps
+    for element in reverse(num_steps)
         if (element == "Up")
             move!(r, Up)
         end
