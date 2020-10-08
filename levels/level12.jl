@@ -4,20 +4,11 @@ function level12(r)
     println("Введите размер клтеки")
     cellOfField = parse(Int, readline())
     x=0; y=0
-    num_steps= []
 
-    while (isborder(r,Down)==false || isborder(r,Left)==false)
-        if (isborder(r, Down) == false)
-            push!(num_steps, "Up")
-            move!(r, Down)
-        end
-        if (isborder(r, Left) == false)
-            push!(num_steps, "Right")
-            move!(r, Left)
-        end
-    end
+    num_steps, _, _ = moveToLeftDownCornerAndReturnArrayOfSteps(r)
 
     horisontalDirection = Right
+    
     while !(isborder(r, Up) && isborder(r, Right))
         putMarkerIfNecessary(r, x, y, cellOfField)
         if isborder(r, Right) || isborder(r, Left) && !(isborder(r, Down) && isborder(r, Left))
@@ -30,17 +21,12 @@ function level12(r)
         move!(r,horisontalDirection)
         (horisontalDirection == Right) ? x+=1 : x-=1
     end
+
     putMarkerIfNecessary(r, x, y, cellOfField)
 
     moveToLeftDownCorner!(r)
 
-    for element in reverse(num_steps)
-        if (element == "Up")
-            move!(r, Up)
-        elseif (element == "Right")
-            move!(r, Right)
-        end
-    end
+    returnByStepsIn(r, num_steps)
 end
 
 function putMarkerIfNecessary(r, x, y, cellOfField)

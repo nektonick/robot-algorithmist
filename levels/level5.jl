@@ -2,31 +2,13 @@ function level5(r)
     println("level5")
     r = Robot("levels/situation_5.sit"; animate=true)
 
-    num_steps=[]
-    while isborder(r,Down)==false || isborder(r,Left)==false
-        if (isborder(r, Down) == false)
-            push!(num_steps, "Up")
-            move!(r, Down)
-        end
-        if (isborder(r, Left) == false)
-            push!(num_steps, "Right")
-            move!(r, Left)
-        end
-    end
+    num_steps, _, _=moveToLeftDownCornerAndReturnArrayOfSteps(r)
 
     for side in (Up, Right, Down, Left)
         moves!(r,side)
         putmarker!(r)
     end
-
-    for element in reverse(num_steps)
-        if (element == "Up")
-            move!(r, Up)
-        end
-        if (element == "Right")
-            move!(r, Right)
-        end
-    end        
+    returnByStepsIn(r, num_steps)
 end
 
 #Другое решение, которое я не вполне понимаю

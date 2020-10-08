@@ -1,19 +1,7 @@
 function level6(r)
     println("level6")
     r=Robot("levels/situation_6.sit"; animate=true)
-    num_steps=[]
-
-    #идём в левый нижний угол и сохраняем путь
-    while (isborder(r,Down)==false || isborder(r,Left)==false)
-        if (isborder(r, Down) == false)
-            push!(num_steps, "Up")
-            move!(r, Down)
-        end
-        if (isborder(r, Left) == false)
-            push!(num_steps, "Right")
-            move!(r, Left)
-        end
-    end
+    num_steps, _, _ =moveToLeftDownCornerAndReturnArrayOfSteps(r)
 
     #обходим поле змейкой (вверх-вниз), пока справа не будет стенки
     isDirUp = true
@@ -42,13 +30,6 @@ function level6(r)
 
     moveToLeftDownCorner!(r)
 
-    #возвращаемся в исходную клетку
-    for element in reverse(num_steps)
-        if (element == "Up")
-            move!(r, Up)
-        elseif (element == "Right")
-            move!(r, Right)
-        end
-    end 
+    returnByStepsIn(r, num_steps)
     
 end

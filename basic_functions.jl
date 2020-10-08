@@ -51,4 +51,32 @@ function moveToLeftDownCorner!(r::Robot)
     moves!(r, Left)
 end
 
+function moveToLeftDownCornerAndReturnArrayOfSteps(r)
+    num_steps=[]
+    verticalPos = 0
+    horizontalPos = 0
+    while (isborder(r,Down)==false || isborder(r,Left)==false)
+        if (isborder(r, Down) == false)
+            push!(num_steps, "Up")
+            verticalPos+=1
+            move!(r, Down)
+        end
+        if (isborder(r, Left) == false)
+            push!(num_steps, "Right")
+            horizontalPos+=1
+            move!(r, Left)
+        end
+    end
+    return num_steps, verticalPos, horizontalPos
+end
+
+function returnByStepsIn(r, num_steps)
+    for element in reverse(num_steps)
+        if (element == "Up")
+            move!(r, Up)
+        elseif (element == "Right")
+            move!(r, Right)
+        end
+    end
+end
 nextDirection(side::DirectionsOfMovement)=DirectionsOfMovement(mod(Int(side)+1,4))

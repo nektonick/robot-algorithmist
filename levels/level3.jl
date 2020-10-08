@@ -3,8 +3,7 @@ function level3(r)
     r = Robot(4, 4; animate=true)
 
     #движемся в левый нижний угол
-    nDown = moves!(r, Down)
-    nLeft = moves!(r, Left)
+    steps, _, _ = moveToLeftDownCornerAndReturnArrayOfSteps(r)
 
     horisontalDirection = Right
 
@@ -18,6 +17,5 @@ function level3(r)
     #возвращение в левый нижний угол
     moveToLeftDownCorner!(r)
     #возвращение в начальное положение
-    moves!(r, Up, nDown)
-    moves!(r, Right, nLeft)
+    returnByStepsIn(r, steps)
 end

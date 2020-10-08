@@ -1,23 +1,8 @@
 function level11(r)
     println("level11")
     r=Robot("levels/situation_11.sit"; animate=true)
-    verticalPos = 0
-    horizontalPos = 0
-    num_steps=[]
-    #в левый нижний угол
-    while (isborder(r,Down)==false || isborder(r,Left)==false)
-        if (isborder(r, Down) == false)
-            push!(num_steps, "Up")
-            verticalPos+=1
-            move!(r, Down)
-        end
-        if (isborder(r, Left) == false)
-            push!(num_steps, "Right")
-            horizontalPos+=1
-            move!(r, Left)
-        end
-    end
-
+    
+    steps, verticalPos, horizontalPos = moveToLeftDownCornerAndReturnArrayOfSteps(r)
 
     for side in (Up, Right, Down, Left)
         if (side == Up || side == Down)
@@ -27,18 +12,10 @@ function level11(r)
         end
     end
 
-    #в исходное положение
-    for element in reverse(num_steps)
-        if (element == "Up")
-            move!(r, Up)
-        elseif (element == "Right")
-            move!(r, Right)
-        end
-    end
-
+    returnByStepsIn(r, steps)
 end
 
-function specialMove(r, pos, side )
+function specialMove(r, pos, side)
     while (pos>0)
         move!(r, side)
         pos -=1
