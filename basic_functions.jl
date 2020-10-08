@@ -50,3 +50,5 @@ function moveToLeftDownCorner!(r::Robot)
     moves!(r, Down)
     moves!(r, Left)
 end
+
+nextDirection(side::DirectionsOfMovement)=DirectionsOfMovement(mod(Int(side)+1,4))
