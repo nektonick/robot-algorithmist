@@ -28,6 +28,20 @@ function solutionForLevel(level::Int)
         level9(r)
     elseif level == 10
         level10(r)
+    elseif level == 11
+        level11(r)
+    elseif level == 12
+        level12(r)
+    elseif level == 13
+        level13(r)
+    elseif level == 14
+        level14(r)
+    elseif level == 15
+        level15(r)
+    elseif level == 16
+        level16(r)
+    elseif level == 17
+        level17(r)
     elseif level == 0
         println("введите имя файла для сохранения")
         s = readline()
