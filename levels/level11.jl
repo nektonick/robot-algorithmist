@@ -18,52 +18,13 @@ function level11(r)
         end
     end
 
-    while (verticalPos>0)
-        move!(r, Up)
-        verticalPos -=1
-    end
 
-    putmarker!(r)
-
-    while !isborder(r, Up)
-        move!(r, Up)
-        verticalPos +=1
-    end
-
-    while (horizontalPos>0)
-        move!(r, Right)
-        horizontalPos -=1
-    end
-
-    putmarker!(r)
-
-    while !isborder(r, Right)
-        move!(r, Right)
-        horizontalPos +=1
-    end
-
-    while (verticalPos>0)
-        move!(r, Down)
-        verticalPos -=1
-    end
-
-    putmarker!(r)
-
-    while !isborder(r, Down)
-        move!(r, Down)
-        verticalPos +=1
-    end
-
-    while (horizontalPos>0)
-        move!(r, Left)
-        horizontalPos -=1
-    end
-
-    putmarker!(r)
-
-    while !isborder(r, Left)
-        move!(r, Left)
-        horizontalPos +=1
+    for side in (Up, Right, Down, Left)
+        if (side == Up || side == Down)
+            verticalPos = specialMove(r, verticalPos, side)
+        else
+            horizontalPos = specialMove(r, horizontalPos, side)
+        end
     end
 
     #в исходное положение
@@ -75,4 +36,19 @@ function level11(r)
         end
     end
 
+end
+
+function specialMove(r, pos, side )
+    while (pos>0)
+        move!(r, side)
+        pos -=1
+    end
+
+    putmarker!(r)
+
+    while !isborder(r, side)
+        move!(r, side)
+        pos +=1
+    end
+    return pos
 end

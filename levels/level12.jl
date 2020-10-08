@@ -19,30 +19,19 @@ function level12(r)
 
     horisontalDirection = Right
     while !(isborder(r, Up) && isborder(r, Right))
-        if(mod(x, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) < cellOfField || 
-            (mod(x+ cellOfField, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) >= cellOfField
-            putmarker!(r)
-        end
-        
-
+        putMarkerIfNecessary(r, x, y, cellOfField)
         if isborder(r, Right) || isborder(r, Left) && !(isborder(r, Down) && isborder(r, Left))
             move!(r, Up)
             y+=1
-            if (mod(x, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) < cellOfField || 
-                (mod(x+ cellOfField, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) >= cellOfField
-                putmarker!(r)
-            end
+            putMarkerIfNecessary(r, x, y, cellOfField)
             horisontalDirection = inverse(horisontalDirection)
         end
 
         move!(r,horisontalDirection)
         (horisontalDirection == Right) ? x+=1 : x-=1
     end
-    if(mod(x, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) < cellOfField || 
-        (mod(x+ cellOfField, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) >= cellOfField
-        putmarker!(r)
-    end
-    
+    putMarkerIfNecessary(r, x, y, cellOfField)
+
     moveToLeftDownCorner!(r)
 
     for element in reverse(num_steps)
@@ -52,5 +41,11 @@ function level12(r)
             move!(r, Right)
         end
     end
+end
 
+function putMarkerIfNecessary(r, x, y, cellOfField)
+    if(mod(x, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) < cellOfField || 
+        (mod(x+ cellOfField, 2*cellOfField)) < cellOfField && (mod(y, 2*cellOfField)) >= cellOfField
+        putmarker!(r)
+    end
 end
