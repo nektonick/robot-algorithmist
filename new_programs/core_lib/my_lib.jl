@@ -26,3 +26,46 @@ function save(sit ,file_name::AbstractString)
     end 
     println("Сохранение завершено")
 end 
+
+next_side(side::HorizonSide)= HorizonSide(mod(Int(side)+1,4))
+inverse_side(side::HorizonSide) = HorizonSide(mod(Int(side)+2, 4)) 
+
+function moves!(r::Robot,side::HorizonSide,num_steps::Int)
+    for _ in 1:num_steps 
+        move!(r,side)
+    end
+end
+
+function move_if_possible!(r::Robot, direct_side::HorizonSide)::Bool
+    left_side = next_side(direct_side)
+    right_side = inverse_side(left_side)
+    num_of_steps=0
+
+    if isborder(r,direct_side)==false
+        move!(r,direct_side)
+        result=true
+    else
+        while isborder(r,direct_side) == true
+            if isborder(r, left_side) == false
+                move!(r, left_side)
+                num_of_steps += 1
+            else
+                break
+            end
+        end
+        if isborder(r,direct_side) == false
+            move!(r,direct_side)
+            while isborder(r,right_side) == true
+                move!(r,direct_side)
+            end
+            result = true
+        else
+            result = false
+        end
+        while num_of_steps>0
+            num_of_steps=num_of_steps-1
+            move!(r,right_side)
+        end
+    end
+    return result
+end
