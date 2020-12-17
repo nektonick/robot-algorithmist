@@ -33,6 +33,7 @@ function movesAndPutMarkers!(r::Robot,side::DirectionsOfMovement)
     end
     putmarker!(r)
 end
+
 function movesAndPutMarkers!(r::Robot,side::DirectionsOfMovement, countOfMarkers::Int)
     while isborder(r, side) == false
         if (countOfMarkers > 0)
@@ -79,4 +80,47 @@ function returnByStepsIn(r, num_steps)
         end
     end
 end
+
 nextDirection(side::DirectionsOfMovement)=DirectionsOfMovement(mod(Int(side)+1,4))
+prevDirection(side::DirectionsOfMovement)=DirectionsOfMovement(mod(Int(side)-1,4))
+
+function moveWhilePossible!(r, side)
+    nextSide = nextDirection(side)
+    prevSide = prevDirection(side)
+    num_steps=0
+    while isborder(r, side) == true
+        if isborder(r, nextSide) == false
+            move!(r, nextSide)
+            num_steps += 1
+        else
+            break
+        end
+    end
+    
+    if isborder(r,side) == false
+        while isborder(r, nextSide) == true
+            move!(r,side)
+        end
+        result = true
+    else
+        result = false
+    end
+    move!(r, prevSide)
+    return result
+end
+
+function putmarkes!(r,side)
+    num_steps=0 
+    while moveWhilePossible!(r, side) == true
+        if !ismarker(r) 
+            putmarker!(r)
+        end
+        num_steps += 1
+    end 
+    return num_steps
+end
+
+moveWithManeuvers!(r, side, num_steps) =
+for _ in 1:num_steps
+    moveWhilePossible!(r,side)
+end

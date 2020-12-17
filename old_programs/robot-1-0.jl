@@ -3,7 +3,7 @@ include("basic_functions.jl")
 
 function solutionForLevel(level::Int)
     r = Robot(; animate=false)
-   
+    
     if level == 1
         level1(r)
         println("1")
@@ -34,27 +34,22 @@ function solutionForLevel(level::Int)
         level12(r)
     elseif level == 13
         level13(r)
-    elseif level == 14
-        level14(r)
-    elseif level == 15
-        level15(r)
-    elseif level == 16
-        level16(r)
-    elseif level == 17
-        level17(r)
     elseif level == 0
         println("введите имя файла для сохранения")
         s = readline()
         generateAndSaveSit(s)
+    else 
+        println("неверный номер уровня")
     end
 end
 
-println("Введите номер уровня")
+println("Введите номер уровня (1-13)")
 n = parse(Int, readline())
 
 #добавляется код для нужного уровня
 levelName="levels/level";
 levelName = levelName * string(n) * ".jl"
+
 include(levelName)
 
 #вызов решения для нужного уровня
@@ -63,3 +58,4 @@ solutionForLevel(n)
 #последняя строка нужна, чтобы окно поля сразу же не закрылось
 println("Программа завершена. Нажмите enter")
 _ = readline()
+
