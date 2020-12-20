@@ -1,8 +1,8 @@
 # Изменяю названия для сторон света, так как мне неудобно использовать немецкие
 Up = Nord
 Down = Sud
-Left = Ost
-Right = West
+Left = West
+Right = Ost
 
 # Работающая функциях сохранения карты
 function save(sit ,file_name::AbstractString)
@@ -28,6 +28,7 @@ function save(sit ,file_name::AbstractString)
 end 
 
 next_side(side::HorizonSide)= HorizonSide(mod(Int(side)+1,4))
+prev_side(side::HorizonSide)= HorizonSide(mod(Int(side)-1,4))
 inverse_side(side::HorizonSide) = HorizonSide(mod(Int(side)+2, 4)) 
 
 function moves!(r::Robot,side::HorizonSide,num_steps::Int)
