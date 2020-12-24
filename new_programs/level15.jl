@@ -9,7 +9,7 @@ function mark_perimetr!(r::Robot)
     y = go_to_border_and_return_steps!(r,Down)
     
     for i ∈ (Up, Right, Down, Left)
-        mark_direction_with_borders!(r,i)
+        go_to_border_and_return_steps!(r, i; markers = true)
     end
     
     go_back_pass_obstacles!(r, Up, y)
