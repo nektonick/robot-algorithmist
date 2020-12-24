@@ -10,12 +10,12 @@ function level7(r)
     #идём змейкой до верхнего правого угла и ставим маркеры
     horisontalDirection = Right
 
-    while !(isborder(r, Up) && isborder(r, Right))
+    while !(isborder(r, Up) && isborder(r, horisontalDirection))
         if (isMarkerNow)
             putmarker!(r)
         end
         
-        if isborder(r, Right) || isborder(r, Left) && !(isborder(r, Down) && isborder(r, Left))
+        if isborder(r, Right) || isborder(r, Left) && !(isborder(r, Down) && isborder(r, Left)) && !(isborder(r,Up))
             move!(r, Up)
             isMarkerNow = !isMarkerNow
             if (isMarkerNow)
