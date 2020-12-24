@@ -43,12 +43,12 @@ end
 """
 Следующее против часовой стрелки напрвление 
 """
-next_counterclockwise_side(side::HorizonSide) = HorizonSide(mod(Int(side)+1,4))
+next_counterclockwise_side(side::HorizonSide)::HorizonSide = HorizonSide(mod(Int(side)+1,4))
 
 """
 Следующее по часовой стрелке напрвление 
 """
-next_clockwise_side(side::HorizonSide)= HorizonSide(mod(Int(side)-1,4))
+next_clockwise_side(side::HorizonSide)::HorizonSide= HorizonSide(mod(Int(side)-1,4))
 
 """
 Противоположное напрвление 
@@ -80,57 +80,114 @@ function mark_direction!(r::Robot, side::HorizonSide)
 end
 
 """
-go_pass_obstacles_and_return_number_of_steps_in_direction!(r::Robot, side::HorizonSide, markers::Bool = false)::Int
-
-Вспомогательная функция для обхода перегородок
+Вспомогательная функция для обхода перегородки
 """
-function go_pass_obstacles_and_return_number_of_steps_in_direction!(r::Robot, side::HorizonSide, markers::Bool = false) ::Int
+function go_to_local_border_end_and_return_steps!(r::Robot, side::HorizonSide; other_side_prioritet::Bool = false)
+    left_moves = 0
+    border_from_right = false
+    border_from_left = false
+    while isborder(r,side)
+        if (isborder(r,next_clockwise_side(side))) #граница справа -> двигаемся влево
+            border_from_right = true
+            while left_moves < 0
+                move!(r,next_counterclockwise_side(side))
+                left_moves += 1
+            end
+        end
+        if (isborder(r,next_counterclockwise_side(side))) # граница слева -> двигаемся вправо 
+            border_from_left = true
+            while left_moves > 0
+                move!(r, next_clockwise_side(side))
+                left_moves -= 1
+            end
+        end
+
+        if other_side_prioritet
+            if !border_from_left
+                move!(r,next_counterclockwise_side(side))
+                left_moves += 1
+            elseif !border_from_right
+                move!(r,next_clockwise_side(side))
+                left_moves-=1
+            else
+                break
+            end     
+        else
+            if !border_from_right
+                move!(r,next_clockwise_side(side))
+                left_moves-=1
+            elseif !border_from_left
+                move!(r,next_counterclockwise_side(side))
+                left_moves += 1
+            else
+                break
+            end  
+        end
+
+    end
+    return left_moves
+end
+
+"""
+Вспомогательная функция
+"""
+function sup_move_orthogonal!(r::Robot, side::HorizonSide, orth_side::HorizonSide, num_of_orthogonal_steps::Int)::Int
+    direction_steps = 0
+    while isborder(r, orth_side) && !isborder(r, side)
+        move!(r,side)
+        direction_steps +=1
+    end
+    for _ in 1:num_of_orthogonal_steps
+        if !isborder(r, orth_side)
+            move!(r, orth_side)
+        else
+            while isborder(r, orth_side) && !isborder(r, inverse_side(side))
+                direction_steps -= 1
+                move!(r, inverse_side(side))
+            end
+            move!(r, orth_side)
+        end
+
+    end
+    return direction_steps
+end
+
+"""
+Вспомогательная функция
+"""
+function sup_move_near_border_and_return_steps!(r::Robot, side::HorizonSide, num_of_orthogonal_steps::Int)::Int
+    ans = 0
+    if num_of_orthogonal_steps != 0
+        if num_of_orthogonal_steps > 0 # робот двигался влево
+            ans = sup_move_orthogonal!(r, side, next_clockwise_side(side), num_of_orthogonal_steps)
+        else
+            ans = sup_move_orthogonal!(r, side, next_counterclockwise_side(side), abs(num_of_orthogonal_steps))
+        end           
+    end
+    return ans
+end
+
+"""
+sup_go_pass_obstacles_and_return_number_of_steps_in_direction!(r::Robot, side::HorizonSide, markers::Bool = false)::Int
+
+Вспомогательная функция, обходящая внутренний прямоугольник
+"""
+function sup_go_pass_obstacles_and_return_number_of_steps_in_direction!(r::Robot, side::HorizonSide, markers::Bool = false) ::Int
     if markers
         putmarker!(r)
     end
 
-    num_of_orthogonal_steps = 0
-    is_prev_right = false
-    while isborder(r,side) && (!isborder(r,next_counterclockwise_side(side)) || !isborder(r,next_clockwise_side(side)))
-        if !isborder(r,next_counterclockwise_side(side)) && (isborder(r,next_clockwise_side(side)) && !is_prev_right)
-            move!(r,next_counterclockwise_side(side))
-            num_of_orthogonal_steps += 1
-            is_prev_right = true
-        else
-            move!(r,next_clockwise_side(side))
-            num_of_orthogonal_steps -= 1
-            if is_prev_right
-                break
-            end
-        end
-    end
+    num_of_orthogonal_steps = go_to_local_border_end_and_return_steps!(r, side)
+    
     direction_steps = 0
 
+    # двигаемся вверх, либо оказываемся сбоку от границы перегородки, либо прошли перегородку
     if !isborder(r,side)
         move!(r,side)
         direction_steps +=1
     end
-
-    if num_of_orthogonal_steps != 0
-        if num_of_orthogonal_steps >0
-            while isborder(r, inverse_side(next_counterclockwise_side(side)))
-                move!(r,side)
-                direction_steps +=1
-            end
-            for _ in 1:num_of_orthogonal_steps
-                move!(r, inverse_side(next_counterclockwise_side(side)))
-            end
-        else
-            num_of_orthogonal_steps = abs(num_of_orthogonal_steps)
-            while isborder(r, inverse_side(next_clockwise_side(side)))
-                move!(r,side)
-                direction_steps +=1
-            end
-            for _ in 1:num_of_orthogonal_steps
-                move!(r, inverse_side(next_clockwise_side(side)))
-            end
-        end           
-    end
+    
+    direction_steps += sup_move_near_border_and_return_steps!(r, side, num_of_orthogonal_steps)   
     
     return direction_steps 
 end
@@ -144,17 +201,17 @@ go_to_border_and_return_steps!(r::Robot,side::HorizonSide; markers::Bool = false
 function go_to_border_and_return_steps!(r::Robot,side::HorizonSide; markers::Bool = false)
     if (markers)
         ans = 0
-        sum = go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side, true)
+        sum = sup_go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side, true)
         while (sum>0)
             ans += sum
-            sum = go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side, true)
+            sum = sup_go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side, true)
         end
     else
         ans = 0
-        sum = go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side)
+        sum = sup_go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side)
         while (sum>0)
             ans += sum
-            sum = go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side)
+            sum = sup_go_pass_obstacles_and_return_number_of_steps_in_direction!(r,side)
         end
     end
     return ans    
@@ -164,60 +221,78 @@ end
 go_back_pass_obstacles!(r::Robot, side::HorizonSide, steps_to_do::Int; markers::Bool = false)
 
 Робот идёт на steps_to_do шагов в направлении, минуя перегородки
-Если попасть в клетку через steps_to_do шагов в данном направлении нельзя, робот врежется в перегородку
 """
 function go_back_pass_obstacles!(r::Robot, side::HorizonSide, steps_to_do::Int; markers::Bool = false)
+    steps_to_go_back = 0
     while (steps_to_do > 0)
 
         if markers
             putmarker!(r)
         end
     
-        num_of_orthogonal_steps = 0
-        is_prev_right = false
-        while isborder(r,side) && (!isborder(r,next_counterclockwise_side(side)) || !isborder(r,next_clockwise_side(side)))
-            if !isborder(r,next_counterclockwise_side(side))
-                move!(r,next_counterclockwise_side(side))
-                num_of_orthogonal_steps += 1
-                is_prev_right = true
-            else
-                move!(r,next_clockwise_side(side))
-                num_of_orthogonal_steps -= 1
-                if is_prev_right
-                    break
-                end
-            end
-        end
+        num_of_orthogonal_steps = go_to_local_border_end_and_return_steps!(r, side)
     
-        if !isborder(r,side) && steps_to_do > 0
+        direction_steps = 0
+
+        # двигаемся вверх, либо оказываемся сбоку от границы перегородки, либо прошли перегородку
+        if !isborder(r,side)
             move!(r,side)
             steps_to_do -= 1
+            steps_to_go_back += 1
         end
-    
-        if num_of_orthogonal_steps != 0
-            if num_of_orthogonal_steps >0
-                while isborder(r, inverse_side(next_counterclockwise_side(side)))
-                    move!(r,side)
-                    steps_to_do -= 1
+
+        steps_done = sup_move_near_border_and_return_steps!(r, side, num_of_orthogonal_steps) 
+        if (steps_done <= steps_to_do && (steps_to_go_back+abs(num_of_orthogonal_steps)) != 0) 
+            steps_to_do -= steps_done
+        else
+            println("Робот не может попасть в данную клетку. Вернуться назад? (Y/N)")
+            user_ans = readline()
+            if user_ans == "Y"
+                go_to_local_border_end_and_return_steps!(r, inverse_side(side); other_side_prioritet = true)
+                if !isborder(r, inverse_side(side)) && steps_to_go_back > 0
+                    while steps_to_go_back > 0
+                        move!(r, inverse_side(side))
+                        steps_to_go_back -= 1
+                    end
                 end
-                for _ in 1:num_of_orthogonal_steps
-                    move!(r, inverse_side(next_counterclockwise_side(side)))
-                end
-            else
-                num_of_orthogonal_steps = abs(num_of_orthogonal_steps)
-                while isborder(r, inverse_side(next_clockwise_side(side)))
-                    move!(r,side)
-                    steps_to_do -= 1
-                end
-                for _ in 1:num_of_orthogonal_steps
-                    move!(r, inverse_side(next_clockwise_side(side)))
-                end
-            end           
-        end
+                sup_move_near_border_and_return_steps!(r, inverse_side(side), -num_of_orthogonal_steps)
+            end
+            break
+        end  
     end
 end
 
-function mark_direction_with_borders!(r::Robot, side::HorizonSide)
-    go_to_border_and_return_steps!(r, side; markers = true)
-    putmarker!(r)
+"""
+go_to_left_down_corner_and_return_path!(r::Robot) ::Array
+
+Перемещает робота в левый нижний угол и возвращет path, 
+по которому можно вернуться обратно используя функцию go_by_path!(r::Robot, path::Array). 
+
+"""
+function go_to_left_down_corner_and_return_path!(r::Robot) ::Array
+    path=[]
+    while isborder(r,Down)==false || isborder(r,Left)==false
+        if isborder(r,Down)==false
+            move!(r,Down)
+            push!(path,Up)
+        end
+        if isborder(r,Left)==false
+            move!(r,Left)
+            push!(path,Right)
+        end
+    end
+    return path
+end
+
+"""
+go_by_path!(r::Robot, path::Array) 
+
+Робот идёт по пути. Путь задан как массив направлений HorizonSide
+"""
+function go_by_path!(r::Robot, path::Array)
+    n=length(path)
+    while n>0
+        move!(r,path[n])
+        n=n-1
+    end
 end
