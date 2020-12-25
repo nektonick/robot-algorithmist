@@ -222,7 +222,7 @@ go_back_pass_obstacles!(r::Robot, side::HorizonSide, steps_to_do::Int; markers::
 
 Робот идёт на steps_to_do шагов в направлении, минуя перегородки
 """
-function go_back_pass_obstacles!(r::Robot, side::HorizonSide, steps_to_do::Int; markers::Bool = false)
+function go_back_pass_obstacles!(r::Robot, side::HorizonSide, steps_to_do::Int; markers::Bool = false, ignore_warning = false)
     steps_to_go_back = 0
     while (steps_to_do > 0)
 
@@ -245,9 +245,12 @@ function go_back_pass_obstacles!(r::Robot, side::HorizonSide, steps_to_do::Int; 
         if (steps_done <= steps_to_do && (steps_to_go_back+abs(num_of_orthogonal_steps)) != 0) 
             steps_to_do -= steps_done
         else
-            println("Робот не может попасть в данную клетку. Вернуться назад? (Y/N)")
-            user_ans = readline()
-            if user_ans == "Y"
+            user_ans = "N"
+            if !ignore_warning
+                println("Робот не может попасть в данную клетку. Вернуться назад? (Y/N)")
+                user_ans = readline()
+            end
+            if user_ans == "Y" || ignore_warning
                 go_to_local_border_end_and_return_steps!(r, inverse_side(side); other_side_prioritet = true)
                 if !isborder(r, inverse_side(side)) && steps_to_go_back > 0
                     while steps_to_go_back > 0
@@ -285,6 +288,19 @@ function go_to_left_down_corner_and_return_path!(r::Robot) ::Array
 end
 
 """
+go_to_l_corner_special!(r::Robot) ::Array
+
+Возвращет массив: сдвиг по x, сдвиг по y, ещё один сдвиг по x
+"""
+function go_to_l_corner_special!(r::Robot) ::Array
+    path=[]
+    push!(path, go_to_border_and_return_steps!(r,Left))
+    push!(path, go_to_border_and_return_steps!(r,Down))
+    push!(path, go_to_border_and_return_steps!(r,Left))
+    return path
+end
+
+"""
 go_by_path!(r::Robot, path::Array) 
 
 Робот идёт по пути. Путь задан как массив направлений HorizonSide
@@ -295,4 +311,15 @@ function go_by_path!(r::Robot, path::Array)
         move!(r,path[n])
         n=n-1
     end
+end
+
+"""
+go_by_path!(r::Robot, path::Array) 
+
+Робот идёт по пути. Путь задан как массив направлений HorizonSide
+"""
+function go_by_path_special!(r::Robot, path::Array)
+    go_back_pass_obstacles!(r, Right, path[3])
+    go_back_pass_obstacles!(r, Up, path[2])
+    go_back_pass_obstacles!(r, Right, path[1])
 end
