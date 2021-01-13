@@ -26,7 +26,7 @@ function get_start_border_position(r::Robot)
 end
 
 function get_start_move_side(r::Robot)
-    return next_side(get_start_border_position(r))
+    return next_counterclockwise_side(get_start_border_position(r))
 end
 
 # полностью совпадает с get_start_border_position(r::Robot)
@@ -52,14 +52,14 @@ function move_along_border(r::MyRobot)
             r.x-=1 
         end
     end
-    r.prev_border_side = prev_side(r.current_side)
+    r.prev_border_side = next_clockwise_side(r.current_side)
 end
 
 """Возвращает 1, если робот находится на "внешнем" углу, 2, если во внутреннем (т.е. рядом 2 соприкасающиеся перегородки), 0, если это не угол"""
 function get_type_of_corner(r::MyRobot)
     ans = 0
     for i in (Up, Right, Down, Left)
-        if (isborder(r.robot, i) && isborder(r.robot, next_side(i)))
+        if (isborder(r.robot, i) && isborder(r.robot, next_counterclockwise_side(i)))
             ans =  2
         end
     end
